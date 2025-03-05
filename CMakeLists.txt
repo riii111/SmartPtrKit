@@ -17,12 +17,16 @@ target_include_directories(smart_ptr_kit PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
+# Example executable
+add_executable(smart_ptr_demo src/main.cpp)
+target_link_libraries(smart_ptr_demo PRIVATE smart_ptr_kit)
+
 # Tests
 enable_testing()
 add_subdirectory(tests)
 
 # Installation
-install(TARGETS smart_ptr_kit
+install(TARGETS smart_ptr_kit smart_ptr_demo
     EXPORT smart_ptr_kitTargets
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
