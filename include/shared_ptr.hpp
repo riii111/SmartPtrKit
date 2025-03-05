@@ -231,13 +231,17 @@ private:
 
 template <typename T, typename... Args>
 shared_ptr<T> make_shared(Args&&... args) {
-    // Create a control block with the object in-place
-    auto cb = new detail::inplace_control_block<T>(std::forward<Args>(args)...);
-    shared_ptr<T> result;
-    // Use private constructor to set the pointer and control block
-    result.m_ptr = cb->get();
-    result.m_ctrl = cb;
-    return result;
+    try {
+        // Create a control block with the object in-place
+        auto cb = new detail::inplace_control_block<T>(std::forward<Args>(args)...);
+        shared_ptr<T> result;
+        // Use private constructor to set the pointer and control block
+        result.m_ptr = cb->get();
+        result.m_ctrl = cb;
+        return result;
+    } catch (...) {
+        throw;
+    }
 }
 
 // Dynamic cast
