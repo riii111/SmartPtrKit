@@ -117,6 +117,18 @@ class shared_ptr {
     friend class weak_ptr<T>;
     template <typename U, typename... Args>
     friend shared_ptr<U> make_shared(Args&&...);
+    
+    template <typename U, typename V>
+    friend shared_ptr<U> dynamic_pointer_cast(const shared_ptr<V>&) noexcept;
+    
+    template <typename U, typename V>
+    friend shared_ptr<U> static_pointer_cast(const shared_ptr<V>&) noexcept;
+    
+    template <typename U, typename V>
+    friend shared_ptr<U> const_pointer_cast(const shared_ptr<V>&) noexcept;
+    
+    template <typename U, typename V>
+    friend shared_ptr<U> reinterpret_pointer_cast(const shared_ptr<V>&) noexcept;
 public:
     using element_type = T;
     
@@ -225,6 +237,52 @@ shared_ptr<T> make_shared(Args&&... args) {
     // Use private constructor to set the pointer and control block
     result.m_ptr = cb->get();
     result.m_ctrl = cb;
+    return result;
+}
+
+// Dynamic cast
+template <typename T, typename U>
+shared_ptr<T> dynamic_pointer_cast(const shared_ptr<U>& other) noexcept {
+    if (auto* p = dynamic_cast<T*>(other.get())) {
+        shared_ptr<T> result;
+        result.m_ptr = p;
+        result.m_ctrl = other.m_ctrl;
+        if (result.m_ctrl) result.m_ctrl->add_ref();
+        return result;
+    }
+    return shared_ptr<T>();
+}
+
+// Static cast
+template <typename T, typename U>
+shared_ptr<T> static_pointer_cast(const shared_ptr<U>& other) noexcept {
+    auto* p = static_cast<T*>(other.get());
+    shared_ptr<T> result;
+    result.m_ptr = p;
+    result.m_ctrl = other.m_ctrl;
+    if (result.m_ctrl) result.m_ctrl->add_ref();
+    return result;
+}
+
+// Const cast
+template <typename T, typename U>
+shared_ptr<T> const_pointer_cast(const shared_ptr<U>& other) noexcept {
+    auto* p = const_cast<T*>(other.get());
+    shared_ptr<T> result;
+    result.m_ptr = p;
+    result.m_ctrl = other.m_ctrl;
+    if (result.m_ctrl) result.m_ctrl->add_ref();
+    return result;
+}
+
+// Reinterpret cast
+template <typename T, typename U>
+shared_ptr<T> reinterpret_pointer_cast(const shared_ptr<U>& other) noexcept {
+    auto* p = reinterpret_cast<T*>(other.get());
+    shared_ptr<T> result;
+    result.m_ptr = p;
+    result.m_ctrl = other.m_ctrl;
+    if (result.m_ctrl) result.m_ctrl->add_ref();
     return result;
 }
 
