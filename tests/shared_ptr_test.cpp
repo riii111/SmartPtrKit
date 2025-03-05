@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "shared_ptr.hpp"
+#include "weak_ptr.hpp"
 
 class Resource {
 public:

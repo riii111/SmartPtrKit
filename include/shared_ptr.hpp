@@ -122,10 +122,19 @@ class weak_ptr;
 // like a Rc<T>, Arc<T>
 template <typename T>
 class shared_ptr {
-    friend class weak_ptr<T>;
+    // Make all specializations of shared_ptr friends of each other
+    template <typename U>
+    friend class shared_ptr;
+    
+    // Make all specializations of weak_ptr friends
+    template <typename U>
+    friend class weak_ptr;
+    
+    // Make make_shared friend
     template <typename U, typename... Args>
     friend shared_ptr<U> make_shared(Args&&...);
     
+    // Make cast functions friends
     template <typename U, typename V>
     friend shared_ptr<U> dynamic_pointer_cast(const shared_ptr<V>&) noexcept;
     

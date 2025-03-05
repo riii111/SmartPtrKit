@@ -169,7 +169,8 @@ unique_ptr<T[]> make_unique(std::size_t size) {
 
 // Disabling make_unique for array types with unknown bounds
 template <typename T, typename... Args>
-void make_unique(Args&&...) = delete;
+typename std::enable_if<std::is_array<T>::value && std::extent<T>::value == 0, void>::type
+make_unique(Args&&...) = delete;
 
 } // namespace sptr
 
