@@ -4,6 +4,7 @@
 #include <utility>
 #include <type_traits>
 #include <atomic>
+#include <memory>
 
 namespace sptr {
 
