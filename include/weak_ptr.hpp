@@ -5,6 +5,7 @@
 
 namespace sptr {
 
+// like a Weak<T>
 template <typename T>
 class weak_ptr {
 public:

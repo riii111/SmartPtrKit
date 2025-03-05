@@ -81,6 +81,7 @@ namespace detail {
 template <typename T>
 class weak_ptr;
 
+// like a Rc<T>, Arc<T>
 template <typename T>
 class shared_ptr {
     friend class weak_ptr<T>;

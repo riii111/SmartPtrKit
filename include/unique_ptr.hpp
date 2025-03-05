@@ -8,6 +8,7 @@
 namespace sptr {
 
 template <typename T, typename Deleter = std::default_delete<T>>
+// like a box<T>
 class unique_ptr {
 public:
     using pointer = T*;
