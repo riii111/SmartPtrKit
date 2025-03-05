@@ -13,11 +13,11 @@ namespace detail {
     public:
         control_block() : m_use_count(1), m_weak_count(0) {}
         
-        void add_ref() noexcept {
+        void add_reference() noexcept {
             ++m_use_count;
         }
         
-        void add_weak_ref() noexcept {
+        void add_weak_reference() noexcept {
             ++m_weak_count;
         }
         
@@ -148,13 +148,13 @@ public:
     
     shared_ptr(const shared_ptr& other) noexcept
         : m_ptr(other.m_ptr), m_ctrl(other.m_ctrl) {
-        if (m_ctrl) m_ctrl->add_ref();
+        if (m_ctrl) m_ctrl->add_reference();
     }
     
     template <typename Y, typename = std::enable_if_t<std::is_convertible_v<Y*, T*>>>
     shared_ptr(const shared_ptr<Y>& other) noexcept
         : m_ptr(other.m_ptr), m_ctrl(other.m_ctrl) {
-        if (m_ctrl) m_ctrl->add_ref();
+        if (m_ctrl) m_ctrl->add_reference();
     }
     
     shared_ptr(shared_ptr&& other) noexcept
@@ -222,7 +222,7 @@ private:
     template <typename Y>
     shared_ptr(Y* ptr, detail::control_block* ctrl) noexcept
         : m_ptr(ptr), m_ctrl(ctrl) {
-        if (m_ctrl) m_ctrl->add_ref();
+        if (m_ctrl) m_ctrl->add_reference();
     }
     
     T* m_ptr;
@@ -251,7 +251,7 @@ shared_ptr<T> dynamic_pointer_cast(const shared_ptr<U>& other) noexcept {
         shared_ptr<T> result;
         result.m_ptr = p;
         result.m_ctrl = other.m_ctrl;
-        if (result.m_ctrl) result.m_ctrl->add_ref();
+        if (result.m_ctrl) result.m_ctrl->add_reference();
         return result;
     }
     return shared_ptr<T>();
@@ -264,7 +264,7 @@ shared_ptr<T> static_pointer_cast(const shared_ptr<U>& other) noexcept {
     shared_ptr<T> result;
     result.m_ptr = p;
     result.m_ctrl = other.m_ctrl;
-    if (result.m_ctrl) result.m_ctrl->add_ref();
+    if (result.m_ctrl) result.m_ctrl->add_reference();
     return result;
 }
 
@@ -275,7 +275,7 @@ shared_ptr<T> const_pointer_cast(const shared_ptr<U>& other) noexcept {
     shared_ptr<T> result;
     result.m_ptr = p;
     result.m_ctrl = other.m_ctrl;
-    if (result.m_ctrl) result.m_ctrl->add_ref();
+    if (result.m_ctrl) result.m_ctrl->add_reference();
     return result;
 }
 
@@ -286,7 +286,7 @@ shared_ptr<T> reinterpret_pointer_cast(const shared_ptr<U>& other) noexcept {
     shared_ptr<T> result;
     result.m_ptr = p;
     result.m_ctrl = other.m_ctrl;
-    if (result.m_ctrl) result.m_ctrl->add_ref();
+    if (result.m_ctrl) result.m_ctrl->add_reference();
     return result;
 }
 

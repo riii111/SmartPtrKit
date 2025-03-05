@@ -13,19 +13,19 @@ public:
     
     weak_ptr(const weak_ptr& other) noexcept
         : m_ptr(other.m_ptr), m_ctrl(other.m_ctrl) {
-        if (m_ctrl) m_ctrl->add_weak_ref();
+        if (m_ctrl) m_ctrl->add_weak_reference();
     }
     
     template <typename Y, typename = std::enable_if_t<std::is_convertible_v<Y*, T*>>>
     weak_ptr(const weak_ptr<Y>& other) noexcept
         : m_ptr(other.m_ptr), m_ctrl(other.m_ctrl) {
-        if (m_ctrl) m_ctrl->add_weak_ref();
+        if (m_ctrl) m_ctrl->add_weak_reference();
     }
     
     template <typename Y, typename = std::enable_if_t<std::is_convertible_v<Y*, T*>>>
     weak_ptr(const shared_ptr<Y>& other) noexcept
         : m_ptr(other.m_ptr), m_ctrl(other.m_ctrl) {
-        if (m_ctrl) m_ctrl->add_weak_ref();
+        if (m_ctrl) m_ctrl->add_weak_reference();
     }
     
     weak_ptr(weak_ptr&& other) noexcept
