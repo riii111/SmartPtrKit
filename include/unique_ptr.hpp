@@ -69,6 +69,14 @@ public:
     explicit operator bool() const noexcept {
         return m_ptr != nullptr;
     }
+    
+    deleter_type& get_deleter() noexcept {
+        return m_deleter;
+    }
+    
+    const deleter_type& get_deleter() const noexcept {
+        return m_deleter;
+    }
 
 private:
     pointer m_ptr;
