@@ -76,6 +76,36 @@ namespace detail {
         T* m_ptr;
         Deleter m_deleter;
     };
+    
+    template <typename T>
+    class inplace_control_block : public control_block {
+    public:
+        template <typename... Args>
+        explicit inplace_control_block(Args&&... args) {
+            new(&m_storage) T(std::forward<Args>(args)...);
+        }
+            
+        void dispose() noexcept override {
+            // Call destructor without deallocating memory
+            get_object()->~T();
+        }
+        
+        void destroy() noexcept override {
+            delete this;
+        }
+        
+        T* get() const noexcept {
+            return get_object();
+        }
+        
+    private:
+        T* get_object() const noexcept {
+            return const_cast<T*>(reinterpret_cast<const T*>(&m_storage));
+        }
+        
+        // Aligned storage for T
+        mutable typename std::aligned_storage<sizeof(T), alignof(T)>::type m_storage;
+    };
 }
 
 template <typename T>
@@ -85,6 +115,8 @@ class weak_ptr;
 template <typename T>
 class shared_ptr {
     friend class weak_ptr<T>;
+    template <typename U, typename... Args>
+    friend shared_ptr<U> make_shared(Args&&...);
 public:
     using element_type = T;
     
@@ -187,9 +219,13 @@ private:
 
 template <typename T, typename... Args>
 shared_ptr<T> make_shared(Args&&... args) {
-    // This is a simplified version - a real implementation would use allocate_shared
-    // with a custom allocator to allocate control block and object in one allocation
-    return shared_ptr<T>(new T(std::forward<Args>(args)...));
+    // Create a control block with the object in-place
+    auto cb = new detail::inplace_control_block<T>(std::forward<Args>(args)...);
+    shared_ptr<T> result;
+    // Use private constructor to set the pointer and control block
+    result.m_ptr = cb->get();
+    result.m_ctrl = cb;
+    return result;
 }
 
 } // namespace sptr
