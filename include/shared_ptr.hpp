@@ -21,9 +21,15 @@ namespace detail {
             ++m_weak_count;
         }
         
+        // Releases ownership and decrements reference count
+        // If reference count becomes zero, the resource is destroyed
+        // Returns whether the control block itself was destroyed
         bool release() noexcept {
+            // Atomically decrement the reference count, and if it reaches zero
             if (--m_use_count == 0) {
+                // Destroy the resource (call its destructor)
                 dispose();
+                // If no weak references exist, destroy the control block itself
                 if (m_weak_count == 0) {
                     destroy();
                     return true;
@@ -32,6 +38,8 @@ namespace detail {
             return false;
         }
         
+        // Decrements the weak reference count
+        // Destroys the control block if no strong references exist and no weak references remain
         void weak_release() noexcept {
             if (--m_weak_count == 0 && m_use_count == 0) {
                 destroy();

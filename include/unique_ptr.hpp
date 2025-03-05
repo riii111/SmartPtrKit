@@ -83,7 +83,7 @@ private:
     deleter_type m_deleter{};
 };
 
-// 配列型に対する特殊化
+// Specialization for array types
 template <typename T, typename Deleter>
 class unique_ptr<T[], Deleter> {
 public:
@@ -129,7 +129,7 @@ public:
         pointer old_ptr = m_ptr;
         m_ptr = p;
         if (old_ptr) {
-            // 配列のデリーターを使用
+            // Use the deleter for arrays
             m_deleter(old_ptr);
         }
     }
@@ -161,13 +161,13 @@ unique_ptr<T> make_unique(Args&&... args) {
     return unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
-// 配列型用のmake_unique特殊化
+// Specialization of make_unique for array types
 template <typename T>
 unique_ptr<T[]> make_unique(std::size_t size) {
     return unique_ptr<T[]>(new T[size]());
 }
 
-// 不明なバウンド配列型に対するmake_uniqueの禁止
+// Disabling make_unique for array types with unknown bounds
 template <typename T, typename... Args>
 void make_unique(Args&&...) = delete;
 
